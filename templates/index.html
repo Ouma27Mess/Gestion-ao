@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Search Section -->
+<div class="row mb-4">
+    <div class="col">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Recherche</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('index') }}">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" name="search_text" placeholder="Rechercher par texte" value="{{ request.args.get('search_text', '') }}">
+                        </div>
+                        <div class="col-md-5">
+                            <input type="date" class="form-control" name="search_date" value="{{ request.args.get('search_date', '') }}">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add New Record Section -->
+<div class="row mb-4">
+    <div class="col">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">Ajouter un nouvel enregistrement</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add') }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="date_insertion" class="form-label">Date d'insertion</label>
+                            <input type="date" class="form-control" id="date_insertion" name="date_insertion" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nom_collab" class="form-label">Nom du collaborateur</label>
+                            <input type="text" class="form-control" id="nom_collab" name="nom_collab" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="support_ao" class="form-label">Support de mise AO</label>
+                            <select class="form-select" id="support_ao" name="support_ao" required>
+                                <option value="">Sélectionnez un support</option>
+                                {% for support in supports_ao %}
+                                <option value="{{ support }}">{{ support }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="source_ao" class="form-label">Source AO</label>
+                            <input type="url" class="form-control" id="source_ao" name="source_ao" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre_cv" class="form-label">Nombre de CV reçus</label>
+                            <input type="number" class="form-control" id="nombre_cv" name="nombre_cv" min="0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="titre_profil" class="form-label">Titre du profil recherché</label>
+                            <input type="text" class="form-control" id="titre_profil" name="titre_profil" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lien_annonce" class="form-label">Lien de l'annonce diffusé</label>
+                            <input type="url" class="form-control" id="lien_annonce" name="lien_annonce" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lien_drive" class="form-label">Lien Drive des CV</label>
+                            <input type="url" class="form-control" id="lien_drive" name="lien_drive" required>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Records List Section -->
+<div class="card shadow-sm">
+    <div class="card-header bg-light">
+        <h5 class="card-title mb-0">Liste des enregistrements</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Collaborateur</th>
+                        <th>Profil recherché</th>
+                        <th>Support AO</th>
+                        <th>Source AO</th>
+                        <th>Nombre CV</th>
+                        <th>Liens</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.date_insertion.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ record.nom_collab }}</td>
+                        <td>{{ record.titre_profil }}</td>
+                        <td>{{ record.support_ao }}</td>
+                        <td>
+                            <a href="{{ record.source_ao }}" class="btn btn-sm btn-outline-info" target="_blank">Source</a>
+                        </td>
+                        <td>{{ record.nombre_cv }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ record.lien_annonce }}" class="btn btn-sm btn-outline-primary" target="_blank">Annonce</a>
+                                <a href="{{ record.lien_drive }}" class="btn btn-sm btn-outline-success" target="_blank">CV</a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('edit', id=record.id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('delete', id=record.id) }}" 
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Modifier l'enregistrement</h5>
+                    <a href="{{ url_for('index') }}" class="btn btn-light btn-sm">Retour</a>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row mb-3">
+                            <!-- Previous fields remain the same -->
+                            <div class="col-md-6">
+                                <label for="source_ao" class="form-label">Source AO</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="source_ao" name="source_ao" 
+                                           value="{{ record.source_ao }}" required>
+                                    <a href="{{ record.source_ao }}" class="btn btn-outline-secondary" target="_blank">
+                                        Ouvrir
+                                    </a>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Un lien valide est requis
+                                </div>
+                            </div>
+                            <!-- Other fields remain the same -->
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                <a href="{{ url_for('index') }}" class="btn btn-secondary">Annuler</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
