@@ -5,15 +5,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+import os
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
-# Get sensitive data from environment variables
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///recruitment.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 # Add this context processor to make 'now' available in all templates
 @app.context_processor
@@ -195,5 +202,9 @@ def internal_error(error):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        create_admin_user()  # Create admin user on startup if it doesn't exist
-    app.run(debug=True)
+        create_admin_user()
+else:
+    # This ensures the database is created for production too
+    with app.app_context():
+        db.create_all()
+        create_admin_user()
