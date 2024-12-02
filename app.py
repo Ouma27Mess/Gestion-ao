@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import json
 
 # Load environment variables
 load_dotenv()
@@ -26,9 +27,18 @@ login_manager.login_view = 'login'
 GOOGLE_CREDENTIALS_PATH = 'credentials.json'
 GOOGLE_SHEET_ID = os.environ.get('GOOGLE_SHEET_ID')
 
+def get_google_credentials():
+    if os.environ.get('GOOGLE_CREDENTIALS'):
+        # For production (Render)
+        return json.loads(os.environ.get('GOOGLE_CREDENTIALS'))
+    else:
+        # For local development
+        with open('credentials.json', 'r') as f:
+            return json.load(f)
+
 def init_google_sheets():
-    credentials = service_account.Credentials.from_service_account_file(
-        GOOGLE_CREDENTIALS_PATH,
+    credentials = service_account.Credentials.from_service_account_info(
+        get_google_credentials(),
         scopes=['https://www.googleapis.com/auth/spreadsheets']
     )
     service = build('sheets', 'v4', credentials=credentials)
@@ -297,5 +307,6 @@ def delete(id):
         flash('Erreur lors de la suppression.', 'danger')
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # Default to 5000 if PORT is not set
+    app.run(host="0.0.0.0", port=port)
