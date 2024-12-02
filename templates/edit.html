@@ -1,38 +1,108 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const supportSelect = document.getElementById('supportAoSelect');
+        const autreInput = document.getElementById('autreSupport');
+    
+        // Fonction pour gérer l'affichage du champ "Autre"
+        function handleSupportChange() {
+            if (supportSelect.value === 'Autre') {
+                autreInput.style.display = 'block';
+                autreInput.required = true;
+            } else {
+                autreInput.style.display = 'none';
+                autreInput.required = false;
+                autreInput.value = '';
+            }
+        }
+    
+        // Initial check
+        handleSupportChange();
+    
+        // Add change event listener
+        supportSelect.addEventListener('change', handleSupportChange);
+    });
+    </script>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Modifier l'enregistrement</h5>
                     <a href="{{ url_for('index') }}" class="btn btn-light btn-sm">Retour</a>
                 </div>
+
                 <div class="card-body">
                     <form method="POST">
-                        <div class="row mb-3">
-                            <!-- Previous fields remain the same -->
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="source_ao" class="form-label">Source AO</label>
-                                <div class="input-group">
-                                    <input type="url" class="form-control" id="source_ao" name="source_ao" 
-                                           value="{{ record.source_ao }}" required>
-                                    <a href="{{ record.source_ao }}" class="btn btn-outline-secondary" target="_blank">
-                                        Ouvrir
-                                    </a>
-                                </div>
-                                <div class="invalid-feedback">
-                                    Un lien valide est requis
+                                <label class="form-label">Date d'insertion</label>
+                                <input type="date" name="date_insertion" class="form-control" 
+                                       value="{{ record.date_insertion.strftime('%Y-%m-%d') }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nom du collaborateur</label>
+                                <input type="text" name="nom_collab" class="form-control" 
+                                       value="{{ record.nom_collab }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Support de mise AO</label>
+                                <div class="support-ao-container">
+                                    <select name="support_ao" class="form-select" id="supportAoSelect" required>
+                                        <option value="">Sélectionnez un support</option>
+                                        {% for support in supports_ao %}
+                                        <option value="{{ support }}" {% if support == record.support_ao %}selected{% endif %}>
+                                            {{ support }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="text" 
+                                           id="autreSupport" 
+                                           name="autre_support" 
+                                           class="form-control mt-2" 
+                                           placeholder="Précisez le support" 
+                                           style="display: none;"
+                                           value="{{ record.support_ao }}">
                                 </div>
                             </div>
-                            <!-- Other fields remain the same -->
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Source AO</label>
+                                <input type="url" name="source_ao" class="form-control" 
+                                       value="{{ record.source_ao }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre de CV reçus</label>
+                                <input type="number" name="nombre_cv" class="form-control" 
+                                       value="{{ record.nombre_cv }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Titre du profil recherché</label>
+                                <input type="text" name="titre_profil" class="form-control" 
+                                       value="{{ record.titre_profil }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Lien de l'annonce</label>
+                                <input type="url" name="lien_annonce" class="form-control" 
+                                       value="{{ record.lien_annonce }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Lien Drive des CV</label>
+                                <input type="url" name="lien_drive" class="form-control" 
+                                       value="{{ record.lien_drive }}" required>
+                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-                                <a href="{{ url_for('index') }}" class="btn btn-secondary">Annuler</a>
-                            </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-danger">Enregistrer les modifications</button>
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary">Annuler</a>
                         </div>
                     </form>
                 </div>
@@ -40,5 +110,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}

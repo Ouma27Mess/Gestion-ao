@@ -47,3 +47,7 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Google credentials
+credentials.json
+**/credentials.json
